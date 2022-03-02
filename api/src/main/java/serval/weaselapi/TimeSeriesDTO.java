@@ -23,4 +23,5 @@ public class TimeSeriesDTO {
                         .mapToDouble(Double::valueOf)
                         .toArray());
     }
+
 }
