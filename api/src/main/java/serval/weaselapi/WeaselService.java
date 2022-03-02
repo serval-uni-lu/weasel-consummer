@@ -35,13 +35,13 @@ public class WeaselService {
         weaselLoader.maxS   = 4; 	// symbols of the discretization alphabet. default: 4.
         Classifier clf=null;
         try{
-            weaselLoader = weaselLoader.load(new File(wclfPath2));
+            weaselLoader = weaselLoader.load(new File(wclfPath));
             logger.info(String.format("Predicting probabilities for %d samples",ts.length));
             Classifier.Predictions p = weaselLoader.predictProbabilities(ts);
             logger.info(String.format("Done !"));
             return p.probabilities;
         }catch (FileNotFoundException fileNotFoundException){
-            logger.error(String.format("Weasel model at [%s] not found or path not provided in application.properties", wclfPath));
+            logger.error(String.format("Weasel model at [%s] not found or property weasel.model.path not set", wclfPath));
             throw new Exception("Model could not be loaded");
         }
 
