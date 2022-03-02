@@ -6,22 +6,28 @@ import java.util.Arrays;
 
 public class TimeSeriesDTO {
     double timestamp;
-    String values;
+    double[] values;
 
-    public String getValues() {
+    public double getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(double timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public double[] getValues() {
         return values;
     }
 
-    public void setValues(String values) {
+    public void setValues(double[] values) {
         this.values = values;
     }
 
     //Required to convert request input to Weasel TimeSerie model
     public TimeSeries getTimeSeries(){
         return new TimeSeries(
-                Arrays.stream(this.values.split("\\s"))
-                        .mapToDouble(Double::valueOf)
-                        .toArray());
+                values);
     }
 
 }

@@ -25,7 +25,7 @@ public class WeaselController {
             int i = 0;
 
             for(TimeSeriesDTO timeSeriesDTO:ts){
-                timeSeries[i] = timeSeriesDTO.getTimeSeries();
+                timeSeries[i] = new TimeSeries(timeSeriesDTO.values);
                 timeSeries[i].norm();
                 i++;
             }
