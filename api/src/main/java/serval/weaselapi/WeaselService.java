@@ -30,12 +30,12 @@ public class WeaselService {
 
     public double[][] getPredictions(TimeSeries[] ts) throws Exception {
         WEASELClassifier weaselLoader = new WEASELClassifier();
-        weaselLoader.minF   = 4;	// represents the minimal length for training SFA words. default: 4.
-        weaselLoader.maxF   = 6;	// represents the maximal length for training SFA words. default: 6.
-        weaselLoader.maxS   = 4; 	// symbols of the discretization alphabet. default: 4.
+//        weaselLoader.minF   = 4;	// represents the minimal length for training SFA words. default: 4.
+//        weaselLoader.maxF   = 6;	// represents the maximal length for training SFA words. default: 6.
+//        weaselLoader.maxS   = 4; 	// symbols of the discretization alphabet. default: 4.
         Classifier clf=null;
         try{
-            weaselLoader = weaselLoader.load(new File(wclfPath));
+            weaselLoader = Classifier.load(new File(wclfPath));
             logger.info(String.format("Predicting probabilities for %d samples",ts.length));
             Classifier.Predictions p = weaselLoader.predictProbabilities(ts);
             logger.info(String.format("Done !"));
