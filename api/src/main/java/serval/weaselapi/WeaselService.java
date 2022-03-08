@@ -17,6 +17,8 @@ import java.io.FileNotFoundException;
 public class WeaselService {
     Logger logger = LoggerFactory.getLogger(WeaselService.class);
 
+    @Value("${resource.path}")
+    String resourcePath;
     @Value("${weasel.model.path}")
     String wclfPath;
     @Value("${weasel.model.path.second}")
@@ -48,23 +50,49 @@ public class WeaselService {
     }
 
     public double[][] train() throws Exception {
-        TimeSeries[] train = TimeSeriesLoader.loadDataset(wTrainPath);
-        TimeSeries[] test = TimeSeriesLoader.loadDataset(wTestPath);
-        File model = new File(wclfPath2);
+        String[] datasets = new String[]{
+                "Car", "FreezerRegularTrain", "MoteStrain",
+                "SonyAIBORobotSurface2", "Wafer", "DodgerLoopWeekend",
+                "FreezerSmallTrain", "Plane", "ItalyPowerDemand", "SonyAIBORobotSurface1",
+                "Trace"
+        };
+//        String[] datasets = new String[]{
+//                "Car", "FreezerRegularTrain", "MoteStrain",
+//                "SonyAIBORobotSurface2", "Wafer", "DodgerLoopWeekend",
+//                "FreezerSmallTrain", "Plane", "StarLightCurves", "FordA", "ItalyPowerDemand", "SonyAIBORobotSurface1",
+//                "Trace"
+//        };
+//        String[] datasets = new String[]{
+//                "FordA", "ItalyPowerDemand",
+//                "Trace"
+//        };
+        double[][] res = null;
+        for (String ds: datasets){
+            logger.info(String.format("Training for %s",ds));
+        TimeSeries[] train = TimeSeriesLoader.loadDataset(String.format("%s/train_%s.csv",resourcePath,ds));
+
+        TimeSeries[] test = TimeSeriesLoader.loadDataset(String.format("%s/test_%s.csv",resourcePath,ds));
+        File model = new File(String.format("%s/model_%s",resourcePath,ds));
         WEASELClassifier weaselLoader = new WEASELClassifier();
         WEASELClassifier.minF = 4;	// represents the minimal length for training SFA words. default: 4.
         WEASELClassifier.maxF = 6;	// represents the maximal length for training SFA words. default: 6.
-        WEASELClassifier.maxS = 4; 	// symbols of the discretization alphabet. default: 4.
-
+        WEASELClassifier.maxS = 4; 	// symbols of the discretion alphabet. default: 4.
         if(!model.exists()) {
             weaselLoader.fit(train);
             weaselLoader.save(model);
         }else weaselLoader = weaselLoader.load(model);
 
+        logger.info(String.format("Done for %s",ds));
         logger.info(String.format("Predicting proba for %d samples",test.length));
         Classifier.Predictions p = weaselLoader.predictProbabilities(test);
-        logger.info(String.format("Done !"));
-        return p.probabilities;
+        int correct = weaselLoader.score(test).correct.get();
+        float accuracy = ((float)correct/(float)test.length )* 100;
+        logger.info(String.format("Done ! [%s] %.2f ",ds,accuracy));
+        res = p.probabilities;
+        }
+
+        return res;
+
     }
 
 }
